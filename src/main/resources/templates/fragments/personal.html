@@ -1,0 +1,51 @@
+<section id="personal" class="content-area" th:fragment="main-personal">
+    <h2>个人中心</h2>
+
+    <!-- 成功提示消息（新增） -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        [[${successMessage}]]
+    </div>
+    
+    <div class="settings">
+        <!-- 用户信息展示 -->
+        <div class="user-info">
+            <span th:if="${username}" th:text="'欢迎，' + ${username} + '！'" class="welcome-text">欢迎，用户名！</span>
+            <span th:unless="${username}" class="login-prompt">
+                <a href="/merchant/login" class="action-link">
+                    <i class="icon-edit"></i> 请先登录
+                </a>
+            </span>
+        </div>
+
+        <!-- 添加条件判断 -->
+        <div class="action-buttons" th:if="${username}">
+            <a href="/merchant/edit-profile" class="action-link">
+                <i class="icon-edit"></i> 编辑资料
+            </a>
+            <form th:action="@{/merchant/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn-exit">
+                    <i class="icon-logout"></i> 退出登录
+                </button>
+            </form>
+            <!-- 注销账户按钮（新增） -->
+            <button class="btn-delete-account" onclick="confirmAccountDeletion()">
+                <i class="icon-delete"></i> 永久注销账户
+            </button>
+
+            <script>
+                function confirmAccountDeletion() {
+                    if (confirm("警告：此操作将永久删除您的账户，所有数据无法恢复！确认继续吗？")) {
+                        // 提交删除请求
+                        fetch('/merchant/delete-account', { method: 'POST' })
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+                }
+            </script>
+        </div>
+    </div>
+</section>
